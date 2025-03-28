@@ -22,29 +22,38 @@
   <li><strong>Git</strong> (Latest Version)</li>
 </ul>
 
-
-<h3>Frontend Setup (Angular 19)</h3>
+<h3>Backend Setup (Node.js + MySQL)</h3>
 <ol>
-  <li><strong>Navigate to the frontend directory:</strong>
-    <pre><code>cd frontend</code></pre>
+  <li><strong>Clone the repository:</strong>
+    <pre><code>git clone https://github.com/yourusername/groupX-fullstack-app.git
+cd backend</code></pre>
   </li>
   <li><strong>Install dependencies:</strong>
     <pre><code>npm install</code></pre>
   </li>
-  <li><strong>Run the Angular app:</strong>
-    <pre><code>ng serve</code></pre>
+  <li><strong>Configure the environment variables:</strong>
+    <pre><code>DB_HOST=localhost
+DB_USER=root
+DB_PASS=yourpassword
+JWT_SECRET=your_secret_key
+SMTP_HOST=smtp.mailtrap.io
+SMTP_USER=your_username
+SMTP_PASS=your_password</code></pre>
   </li>
-  <li><strong>Using the Fake Backend:</strong>
-    <p>Open <code>app.module.ts</code> and ensure <code>fakeBackendProvider</code> is included in the <code>providers</code> array:</p>
-    <pre><code>providers: [fakeBackendProvider]</code></pre>
-    <p>This allows testing without connecting to the real API.</p>
+  <li><strong>Run the database migrations:</strong>
+    <pre><code>npm run migrate</code></pre>
+  </li>
+  <li><strong>Start the backend server:</strong>
+    <pre><code>npm start</code></pre>
   </li>
 </ol>
+
+
 
 <hr>
 
 <h2>API Endpoints</h2>
-<table border="1">
+<table class="api-table">
   <tr>
     <th>Method</th>
     <th>Endpoint</th>
@@ -52,78 +61,92 @@
     <th>Auth Required</th>
   </tr>
   <tr>
-    <td>POST</td>
-    <td>/api/auth/register</td>
+    <td class="api-method">POST</td>
+    <td>/accounts/register</td>
     <td>Register a new user</td>
-    <td>No</td>
+    <td class="auth-no">NO</td>
   </tr>
   <tr>
-    <td>POST</td>
-    <td>/api/auth/login</td>
-    <td>Login user</td>
-    <td>No</td>
+    <td class="api-method">POST</td>
+    <td>/accounts/refresh-token</td>
+    <td>The refresh token is sent and returned via cookies.</td>
+    <td class="auth-no">NO</td>
   </tr>
   <tr>
-    <td>GET</td>
-    <td>/api/users/me</td>
-    <td>Get current user details</td>
-    <td>Yes</td>
+    <td class="api-method">POST</td>
+    <td>/accounts/revoke-token</td>
+    <td>Admin users can revoke the tokens of any account, regular users can only revoke their own tokens.</td>
+    <td class="auth-yes">YES</td>
   </tr>
   <tr>
-    <td>PUT</td>
-    <td>/api/users/update</td>
-    <td>Update user profile</td>
-    <td>Yes</td>
+    <td class="api-method">POST</td>
+    <td>/accounts/authenticate</td>
+    <td>Accounts must be verified before authenticating.</td>
+    <td class="auth-no">NO</td>
   </tr>
   <tr>
-    <td>POST</td>
-    <td>/api/auth/forgot-password</td>
-    <td>Request password reset</td>
-    <td>No</td>
+    <td class="api-method">POST</td>
+    <td>/accounts/verify-email</td>
+    <td>Verify a new account with a verification token received by email after registration.</td>
+    <td class="auth-no">NO</td>
+  </tr>
+  <tr>
+    <td class="api-method">POST</td>
+    <td>/accounts/forgot-password</td>
+    <td>Submit email address to reset the password on an account.</td>
+    <td class="auth-no">NO</td>
+  </tr>
+  <tr>
+    <td class="api-method">POST</td>
+    <td>/accounts/validate-reset-token</td>
+    <td>Validate the reset password token received by email.</td>
+    <td class="auth-no">NO</td>
+  </tr>
+  <tr>
+    <td class="api-method">POST</td>
+    <td>/accounts/reset-password</td>
+    <td>Reset the password for an account.</td>
+    <td class="auth-no">NO</td>
+  </tr>
+  <tr>
+    <td class="api-method">GET</td>
+    <td>/accounts</td>
+    <td>Get a list of all accounts.</td>
+    <td class="auth-yes">YES</td>
+  </tr>
+  <tr>
+    <td class="api-method">GET</td>
+    <td>/accounts/:id</td>
+    <td>Get a single account by ID.</td>
+    <td class="auth-yes">YES</td>
+  </tr>
+  <tr>
+    <td class="api-method">PUT</td>
+    <td>/accounts/:id</td>
+    <td>Update an account.</td>
+    <td class="auth-yes">YES</td>
+  </tr>
+  <tr>
+    <td class="api-method">DELETE</td>
+    <td>/accounts/:id</td>
+    <td>Delete an account.</td>
+    <td class="auth-yes">YES</td>
   </tr>
 </table>
-
-<h3>Request & Response Example</h3>
-<h4>User Login Request</h4>
-<pre><code>{
-  "email": "user@example.com",
-  "password": "password123"
-}</code></pre>
-<h4>User Login Response</h4>
-<pre><code>{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI..."
-}</code></pre>
-
 <hr>
 
-<h2>Frontend Features</h2>
-<ul>
-  <li><strong>User Authentication:</strong> Register, Login, Logout</li>
-  <li><strong>Profile Management:</strong> Update profile details</li>
-  <li><strong>Role-Based Access:</strong> Different UI for Admin and Users</li>
-  <li><strong>Email Verification & Password Reset</strong></li>
-  <li><strong>Fake Backend for Testing</strong></li>
-</ul>
 
 <hr>
 
 <h2>Testing Instructions</h2>
 
-<h3>Frontend Testing</h3>
-<ul>
-  <li><strong>Fake Backend Testing:</strong>
-    <ul>
-      <li>Enable <code>fakeBackendProvider</code> in <code>app.module.ts</code>.</li>
-      <li>Test UI interactions (login, register, etc.).</li>
-    </ul>
-  </li>
-  <li><strong>Real API Testing:</strong>
-    <ul>
-      <li>Disable the fake backend, connect frontend to the real API.</li>
-      <li>Verify that all features work as expected.</li>
-    </ul>
-  </li>
-</ul>
+<h3>Backend Testing (Postman)</h3>
+<ol>
+  <li><strong>Install <a href="https://www.postman.com/">Postman</a>.</strong></li>
+  <li><strong>Import <code>postman_collection.json</code> into Postman.</strong></li>
+  <li><strong>Run API requests</strong> for login, register, and user management.</li>
+</ol>
+
 
 <hr>
 
@@ -143,7 +166,7 @@
   </tr>
   <tr>
     <td>Roy P. Estorco</td>
-    <td>Tester & DevOps Lead</td>
+    <td>Tester &</td>
   </tr>
   <tr>
     <td>Raquel Pacure</td>
